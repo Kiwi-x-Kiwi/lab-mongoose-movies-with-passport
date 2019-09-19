@@ -35,7 +35,7 @@ nav > ul > li {
   flex-flow: row wrap;
   align-content: center;
   padding: 15px 0;
-  margin: 0%; }
+  margin: 0 15px 0 0; }
 
 .celeb-card > form, .movie-card > form {
   margin: auto 15px; }

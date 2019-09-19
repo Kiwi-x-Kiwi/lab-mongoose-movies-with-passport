@@ -5,4 +5,6 @@
 <h4>Plot: {{movie.plot}}</h3>
 <h4>Main Cast: <a href="/celebrities/{{movie.celebs._id}}">{{movie.celebs.name}}</a></h4>
 
-<a href="/movies/{{movie._id}}/edit">Edit Movie</a>
+{{#if movie.belongsToUser}}
+  <a href="/movies/{{movie._id}}/edit">Edit Movie</a>
+{{/if}}

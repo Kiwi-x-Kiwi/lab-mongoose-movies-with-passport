@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const passport = require("passport");
 
 // Imports User Model
 const User = require("../models/User");
@@ -7,6 +8,7 @@ const User = require("../models/User");
 // Imports Bcrypt and set it up to encrypt password
 const bcrypt = require("bcryptjs");
 const bcryptSalt = 10;
+
 
 router.get('/signup', (req, res, next) => {
   res.render("auth-views/signup", {user: req.session.currentUser})
@@ -55,42 +57,15 @@ router.get('/login', (req, res, next) => {
   res.render("auth-views/login", { user: req.session.currentUser})
 });
 
-router.post('/login', (req, res, next) => {
-  const username = req.body.username;
-  const password = req.body.password;
-
-  if(username === "" || password === ""){
-    res.render("auth-views/signup",{
-      errorMessage: "Please provide both username and password to login.", user: req.session.currentUser
-    })
-    return;
-  }
-
-  User.findOne({ "username": username })
-  .then(userFromDB =>{
-    if(userFromDB === null){
-      res.render("auth-views/login", {
-        errorMessage: "User does not exist", user: req.session.currentUser
-      })
-      return;
-    }
-
-    // const salt = bcrypt.genSaltSync(bcryptSalt);
-    // const hashPass = bcrypt.hashSync(password, salt);
-    
-    if(bcrypt.compareSync(password, userFromDB.password)){
-      req.session.currentUser = userFromDB;
-      res.redirect("/")
-    }else{
-      res.redirect("/login", {errorMessage: "Please check your username and password and try again"})
-    }
-    
-    })
-    .catch(err => next(err));
-});
+router.post("/login", passport.authenticate("local", {
+  successRedirect: "/",
+  failureRedirect: "/login",
+  failureFlash: true,
+  passReqToCallback: true,
+}));
 
 router.use((req, res, next) => {
-  if (req.session.currentUser) { 
+  if (req.user) { 
     next(); 
   } else {
     res.redirect("/login");
@@ -98,7 +73,7 @@ router.use((req, res, next) => {
 });
 
 router.get("/secret", (req, res, next) => {
-  res.render("auth-views/secret", {user: req.session.currentUser});
+  res.render("auth-views/secret", {user: req.user});
 });
 
 router.get("/logout", (req, res, next) => {

@@ -8,7 +8,12 @@ const Celebrity = require("../models/Celebrity");
 router.get('/movies', (req, res, next) => {
   Movie.find({})
     .then(moviesFromDB=>{
-      res.render('movie-views/movies', { movies: moviesFromDB, user: req.session.currentUser});
+      moviesFromDB.forEach((movie)=>{
+        if (movie.user && req.user && movie.user.equals(req.user._id)) {
+          movie.belongsToUser = true;
+        }
+      })
+      res.render('movie-views/movies', { movies: moviesFromDB, user: req.user});
     })
     .catch(err => next(err))
 });
@@ -18,7 +23,8 @@ router.post('/movies', (req, res, next) => {
     title: req.body.title,
     genre: req.body.genre,
     plot: req.body.plot,
-    celebs: req.body.celebs
+    celebs: req.body.celebs,
+    user: req.user
   });
 
   newMovie.save()
@@ -32,9 +38,12 @@ router.post('/movies', (req, res, next) => {
 });
 
 router.get('/movies/new', (req, res, next) => {
+  if(!req.user){
+    res.redirect("/login");
+  }
   Celebrity.find({})
     .then(resultFromDB => {
-      res.render("movie-views/new", { celebs: resultFromDB, user: req.session.currentUser})
+      res.render("movie-views/new", { celebs: resultFromDB, user: req.user})
     })
     .catch(err => next(err));
 });
@@ -42,6 +51,13 @@ router.get('/movies/new', (req, res, next) => {
 router.get('/movies/:id/edit', (req, res, next) => {
   Movie.findById(req.params.id)
     .then(movieFromDB => {
+      if (!req.user || !movieFromDB.user) {
+        res.redirect("/login")
+        return;
+      } else if (!movieFromDB.user.equals(req.user._id)) {
+        res.redirect("/");
+        return;
+      }
       Celebrity.find({})
         .then(celebsFromDB => {
           celebsFromDB.forEach((eachCeleb)=>{
@@ -53,7 +69,7 @@ router.get('/movies/:id/edit', (req, res, next) => {
 
           })
           console.log(celebsFromDB)
-          res.render("movie-views/edit", { movie: movieFromDB, celebs: celebsFromDB, user: req.session.currentUser})
+          res.render("movie-views/edit", { movie: movieFromDB, celebs: celebsFromDB, user: req.user})
         })
         .catch(err => next(err));
     })
@@ -69,7 +85,10 @@ router.post('/movies/:id/delete', (req, res, next) => {
 router.get('/movies/:id', (req, res, next) => {
   Movie.findById(req.params.id).populate("celebs")
   .then(movieFromDB => {
-    res.render("movie-views/details", { movie: movieFromDB, user: req.session.currentUser})
+    if (movieFromDB.user && req.user && movieFromDB.user.equals(req.user._id)) {
+      movieFromDB.belongsToUser = true;
+    }
+    res.render("movie-views/details", { movie: movieFromDB, user: req.user})
   })
   .catch(err => next(err))
 });

@@ -5,4 +5,6 @@
 <h4>Catch Phrase: {{celeb.catchPhrase}}</h3>
 <h4>Casted in: <a href="/movies/{{celeb.movies._id}}">{{celeb.movies.title}}</a></h4>
 
-<a href="/celebrities/{{celeb._id}}/edit">Edit Celeb</a>
+{{#if celeb.belongsToUser}}
+  <a href="/celebrities/{{celeb._id}}/edit">Edit Celeb</a>
+{{/if}}

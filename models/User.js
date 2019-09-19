@@ -9,7 +9,10 @@ const userSchema = new Schema({
   username: String,
   password: String,
 
-  // role: String
+  // role: String,
+
+  googleID: String,
+  image: String,
 },{
   timestamps: true
 })
