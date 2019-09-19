@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>{{title}}</title>
+  <link rel="stylesheet" href="/stylesheets/style.css" />
+</head>
+
+
+<nav>
+  <ul>
+    <li><a href="/celebrities">All Celebrities</a></li>
+    <li><a href="/celebrities/new">New Celeb</a></li>
+    <li><a href="/movies">All Movies</a></li>
+    <li><a href="/movies/new">New Movie</a></li>
+    <li><a href="/secret">Member Only</a></li>
+
+    {{!-- <div class="right-aligned"> --}}
+      {{#if user}}
+        <li><a href="/logout">Log Off</a></li>
+        {{else}}
+          <li><a href="/signup">Sign Up</a></li>
+          <li><a href="/login">Log In</a></li>
+      {{/if}}
+    {{!-- </div> --}}
+
+  </ul>
+</nav>
+
+<body>
+  <div>
+    {{{body}}}
+  </div>
+  <script src="/javascripts/script.js"></script>
+</body>
+</html>

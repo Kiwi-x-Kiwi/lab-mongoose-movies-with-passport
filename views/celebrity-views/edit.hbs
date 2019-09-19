@@ -1,0 +1,26 @@
+<h2>Edit Celeb Info</h2>
+
+<form action="/celebrities/{{celeb._id}}" method="POST">
+  <label>Name: </label>
+  <input type="text" name="name" value = "{{celeb.name}}">
+
+  <label>Occupation: </label>
+  <input type="text" name="occupation" value = "{{celeb.occupation}}">
+
+  <label>Catch Phrase: </label>
+  <input type="text" name="catchPhrase" value = "{{celeb.catchPhrase}}">
+
+  <label>Movies: </label>
+  <select name="movies">
+    
+    {{#each movies}}
+      {{#if this.match}}
+      <option selected value="{{this._id}}">{{this.title}}</option>
+      {{else}}
+      <option value="{{this._id}}">{{this.title}}</option>
+      {{/if}}
+    {{/each}}
+  </select>
+
+  <button type="submit">Update Celeb</button>
+</form>
