@@ -16,6 +16,9 @@ router.get('/celebrities', (req, res, next) => {
       // console.log(celebsFromDB)
       celebsFromDB.forEach((celeb) => {
         if(celeb.user && req.user && celeb.user.equals(req.user._id)){
+          
+          celeb.belongsToUser = true;
+        } else if (req.user && req.user.role == "admin"){
           celeb.belongsToUser = true;
         }
       })
@@ -59,7 +62,7 @@ router.get('/celebrities/:id/edit', (req, res, next) => {
     .then(resultFromDB => {
       if (!req.user || !resultFromDB.user){
         res.redirect("/login")
-      } else if (!resultFromDB.user.equals(req.user._id)){
+      } else if (!resultFromDB.user.equals(req.user._id) && !(req.user.role == "admin")){
         res.redirect("/");
       }
       Movie.find()
@@ -84,7 +87,9 @@ router.post('/celebrities/:id/delete', (req, res, next) => {
 router.get('/celebrities/:id', (req, res, next) => {
   Celebrity.findById(req.params.id).populate("movies")
     .then(celebFromDB => {
-      if (celebFromDB.user && req.user && celebFromDB.user.equals(req.user._id)) {
+      if (celebFromDB.user && req.user && celebFromDB.user.equals(req.user._id)){
+        celebFromDB.belongsToUser = true;
+      } else if (req.user && req.user.role == "admin"){
         celebFromDB.belongsToUser = true;
       }
       res.render("celebrity-views/details", { celeb: celebFromDB, user: req.user })

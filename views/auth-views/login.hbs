@@ -12,3 +12,10 @@
 
   <button type="submit">Log In</button>
 </form>
+
+{{#unless user}}
+  Home page
+  <div>
+    <a href="/auth/google">Login With Google</a>
+  </div>
+{{/unless}}

@@ -11,6 +11,8 @@ router.get('/movies', (req, res, next) => {
       moviesFromDB.forEach((movie)=>{
         if (movie.user && req.user && movie.user.equals(req.user._id)) {
           movie.belongsToUser = true;
+        } else if (req.user && req.user.role == "admin") {
+          movie.belongsToUser = true;
         }
       })
       res.render('movie-views/movies', { movies: moviesFromDB, user: req.user});
@@ -54,7 +56,7 @@ router.get('/movies/:id/edit', (req, res, next) => {
       if (!req.user || !movieFromDB.user) {
         res.redirect("/login")
         return;
-      } else if (!movieFromDB.user.equals(req.user._id)) {
+      } else if (!movieFromDB.user.equals(req.user._id) && !(req.user.role == "admin")) {
         res.redirect("/");
         return;
       }
@@ -86,6 +88,8 @@ router.get('/movies/:id', (req, res, next) => {
   Movie.findById(req.params.id).populate("celebs")
   .then(movieFromDB => {
     if (movieFromDB.user && req.user && movieFromDB.user.equals(req.user._id)) {
+      movieFromDB.belongsToUser = true;
+    } else if (req.user && req.user.role == "admin") {
       movieFromDB.belongsToUser = true;
     }
     res.render("movie-views/details", { movie: movieFromDB, user: req.user})

@@ -9,6 +9,22 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const bcryptSalt = 10;
 
+router.get(
+  "/auth/google",
+  passport.authenticate("google", {
+    scope: [
+      "https://www.googleapis.com/auth/userinfo.profile",
+      "https://www.googleapis.com/auth/userinfo.email"
+    ]
+  })
+);
+router.get(
+  "/auth/google/callback",
+  passport.authenticate("google", {
+    successRedirect: "/secret",
+    failureRedirect: "/" // here you would redirect to the login page using traditional login approach
+  })
+);
 
 router.get('/signup', (req, res, next) => {
   res.render("auth-views/signup", {user: req.session.currentUser})

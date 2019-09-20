@@ -8,11 +8,12 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema({
   username: String,
   password: String,
-
-  // role: String,
-
   googleID: String,
   image: String,
+  role: {
+    type: String, 
+    enum:["user", "admin"], 
+    default: "user"},
 },{
   timestamps: true
 })
